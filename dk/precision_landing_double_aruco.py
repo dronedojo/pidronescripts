@@ -35,7 +35,7 @@ vertical_res = 480
 horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
 vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
 
-calib_path="/home/pi/repo/how_do_drones_work/opencv/pictures/"
+calib_path="/home/pi/video2calibration/calibrationFiles"
 cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
 cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
 ##
@@ -88,8 +88,8 @@ def arm_and_takeoff(targetHeight):
 	vehicle.simple_takeoff(targetHeight) ##meters
 
 	while True:
-		print("Current Altitude: %d"%vehicle.rangefinder.distance)
-		if vehicle.rangefinder.distance>=.95*targetHeight:
+		print("Current Altitude: %d"%vehicle.location.global_relative_frame.alt)
+		if vehicle.location.global_relative_frame.alt>=.95*targetHeight:
 			break
 		time.sleep(1)
 	print("Target altitude reached!!")

@@ -87,8 +87,8 @@ def arm_and_takeoff(targetHeight):
 	vehicle.simple_takeoff(targetHeight) ##meters
 
 	while True:
-		print("Current Altitude: %d"%vehicle.rangefinder.distance)
-		if vehicle.rangefinder.distance>=.95*targetHeight:
+		print("Current Altitude: %d"%vehicle.location.global_relative_frame.alt)
+		if vehicle.location.global_relative_frame.alt>=.95*targetHeight:
 			break
 		time.sleep(1)
 	print("Target altitude reached!!")
