@@ -35,10 +35,14 @@ vertical_res = 480
 horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
 vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
 
+
+##REQUIRED: Calibration files for camera
+##Look up https://github.com/dronedojo/video2calibration for info
 calib_path="/home/pi/video2calibration/calibrationFiles"
+
 cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
 cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
-##
+#########
 
 ##Counters and script triggers
 found_count=0
@@ -148,7 +152,7 @@ def lander():
     id_to_find=0
     marker_height=0
     marker_size=0
-    altitude = vehicle.rangefinder.distance
+    altitude = vehicle.location.global_relative_frame.alt ##Use vehicle.rangefinder.distance if rangefinder data desired instead
 
     if altitude > marker_heights[1]:
         id_to_find=ids_to_find[0]
@@ -164,9 +168,10 @@ def lander():
     try:
         if ids is not None:
             for id in ids:
-                single_corners=[corners_np[counter][0]]
                 if id == id_to_find:
-                    ret = aruco.estimatePoseSingleMarkers(corners,marker_size,cameraMatrix=cameraMatrix,distCoeffs=cameraDistortion)
+                    corners_single = [corners[counter]]
+                    corners_single_np = np.asarray(corners_single)
+                    ret = aruco.estimatePoseSingleMarkers(corners_single,marker_size,cameraMatrix=cameraMatrix,distCoeffs=cameraDistortion)
                     (rvec, tvec) = (ret[0][0, 0, :], ret[1][0, 0, :])
                     x = '{:.2f}'.format(tvec[0])
                     y = '{:.2f}'.format(tvec[1])
@@ -175,8 +180,8 @@ def lander():
                     y_sum = 0
                     x_sum = 0
 
-                    x_sum = corners_np[counter][0][0][0]+ corners_np[counter][0][1][0]+ corners_np[counter][0][2][0]+ corners_np[counter][0][3][0]
-                    y_sum = corners_np[counter][0][0][1]+ corners_np[counter][0][1][1]+ corners_np[counter][0][2][1]+ corners_np[counter][0][3][1]
+                    x_sum = corners_single_np[0][0][0][0]+ corners_single_np[0][0][1][0]+ corners_single_np[0][0][2][0]+ corners_single_np[0][0][3][0]
+                    y_sum = corners_single_np[0][0][0][1]+ corners_single_np[0][0][1][1]+ corners_single_np[0][0][2][1]+ corners_single_np[0][0][3][1]
 
                     x_avg = x_sum*.25
                     y_avg = y_sum*.25
@@ -200,8 +205,11 @@ def lander():
                     print("MARKER POSITION: x=" +x+" y= "+y+" z="+z)
                     found_count=found_count+1
                     id_found=1
-                    #print(str(time.time()))
-        if id_found==0:
+                    print("")
+                counter=counter+1
+            if id_found==0:
+                notfound_count=notfound_count+1
+        else:
             notfound_count=notfound_count+1
     except Exception as e:
         print('Target likely not found. Error: '+str(e))

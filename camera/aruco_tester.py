@@ -17,8 +17,8 @@ if len(sys.argv)>1:
     if viewVideo=='0' or viewVideo=='False' or viewVideo=='false':
         viewVideo=False
 ############ARUCO/CV2############
-id_to_find=72
-marker_size=19 #cm
+id_to_find=129
+marker_size=40 #cm
 
 width=640
 height=480

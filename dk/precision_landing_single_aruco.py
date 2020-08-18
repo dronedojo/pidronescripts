@@ -87,8 +87,8 @@ def arm_and_takeoff(targetHeight):
 	vehicle.simple_takeoff(targetHeight) ##meters
 
 	while True:
-		print("Current Altitude: %d"%vehicle.location.global_relative_frame.alt)
-		if vehicle.location.global_relative_frame.alt>=.95*targetHeight:
+		print("Current Altitude: %d"%vehicle.rangefinder.distance)
+		if vehicle.rangefinder.distance>=.95*targetHeight:
 			break
 		time.sleep(1)
 	print("Target altitude reached!!")
@@ -174,7 +174,7 @@ def lander():
             print("FOUND COUNT: "+str(found_count)+" NOTFOUND COUNT: "+str(notfound_count))
             print("MARKER POSITION: x=" +x+" y= "+y+" z="+z)
             found_count=found_count+1
-            print(str(time.time()))
+            print("")
         else:
             notfound_count=notfound_count+1
     except Exception as e:
