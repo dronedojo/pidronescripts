@@ -7,6 +7,7 @@ from dronekit import connect, VehicleMode,LocationGlobal,LocationGlobalRelative
 from pymavlink import mavutil
 #############################
 
+manualArm=False ##If True, arming from RC controller, If False, arming from this script. 
 targetAltitude=0
 if len(sys.argv)>1:
     targetAltitude=float(sys.argv[1])
@@ -19,6 +20,7 @@ vehicle.parameters['PLND_ENABLED']=0
 vehicle.parameters['PLND_TYPE']=1
 vehicle.parameters['PLND_EST_TYPE']=0
 vehicle.parameters['LAND_SPEED']=30
+
 #########FUNCTIONS###########
 def arm_and_takeoff(targetHeight):
 	while vehicle.is_armable!=True:
@@ -33,11 +35,18 @@ def arm_and_takeoff(targetHeight):
 		time.sleep(1)
 	print("Vehicle now in GUIDED MODE. Have fun!!")
 
-	vehicle.armed = True
-	while vehicle.armed==False:
-		print("Waiting for vehicle to become armed.")
-		time.sleep(1)
-	print("Look out! Virtual props are spinning!!")
+    if manualArm==False:
+        vehicle.armed = True
+        while vehicle.armed==False:
+            print("Waiting for vehicle to become armed.")
+            time.sleep(1)
+    else:
+        if vehicle.armed == False:
+            print("Exiting script. manualArm set to True but vehicle not armed.")
+            print("Set manualArm to True if desiring script to arm the drone.")
+            return None
+    print("Look out! Props are spinning!!")
+            
 	vehicle.simple_takeoff(targetHeight) ##meters
 
 	while True:
@@ -73,4 +82,3 @@ if __name__=='__main__':
         time.sleep(1)
     except:
         pass
-cv2.destroyAllWindows()

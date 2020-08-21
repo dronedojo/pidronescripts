@@ -53,6 +53,9 @@ start_time=0
 end_time=0
 script_mode = 1 ##1 for arm and takeoff, 2 for manual LOITER to GUIDED land 
 ready_to_land=0 ##1 to trigger landing
+
+manualArm=False ##If True, arming from RC controller, If False, arming from this script. 
+
 #########FUNCTIONS#################
 
 def connectMyCopter():
@@ -75,20 +78,26 @@ def arm_and_takeoff(targetHeight):
 		print("Waiting for vehicle to become armable.")
 		time.sleep(1)
 	print("Vehicle is now armable")
-
+    
 	vehicle.mode = VehicleMode("GUIDED")
-
+            
 	while vehicle.mode!='GUIDED':
 		print("Waiting for drone to enter GUIDED flight mode")
 		time.sleep(1)
 	print("Vehicle now in GUIDED MODE. Have fun!!")
 
-	vehicle.armed = True
-	while vehicle.armed==False:
-		print("Waiting for vehicle to become armed.")
-		time.sleep(1)
-	print("Look out! Virtual props are spinning!!")
-
+    if manualArm==False:
+        vehicle.armed = True
+        while vehicle.armed==False:
+            print("Waiting for vehicle to become armed.")
+            time.sleep(1)
+    else:
+        if vehicle.armed == False:
+            print("Exiting script. manualArm set to True but vehicle not armed.")
+            print("Set manualArm to True if desiring script to arm the drone.")
+            return None
+    print("Look out! Props are spinning!!")
+            
 	vehicle.simple_takeoff(targetHeight) ##meters
 
 	while True:
@@ -99,6 +108,7 @@ def arm_and_takeoff(targetHeight):
 	print("Target altitude reached!!")
 
 	return None
+
 
 def send_local_ned_velocity(vx, vy, vz):
 	msg = vehicle.message_factory.set_position_target_local_ned_encode(
