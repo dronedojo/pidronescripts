@@ -19,7 +19,7 @@ import imutils
 ids_to_find = [129,72]
 marker_sizes = [40,19] #cm
 marker_heights = [7,4]
-takeoff_height = 7
+takeoff_height = 10
 velocity = .5
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
@@ -38,10 +38,10 @@ vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
 
 ##REQUIRED: Calibration files for camera
 ##Look up https://github.com/dronedojo/video2calibration for info
-calib_path="/home/pi/video2calibration/calibrationFiles"
+calib_path="/home/pi/video2calibration/calibrationFiles/"
 
-cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
-cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
+cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix640.txt', delimiter=',')
+cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion640.txt', delimiter=',')
 #########
 
 ##Counters and script triggers
@@ -54,7 +54,7 @@ end_time=0
 script_mode = 1 ##1 for arm and takeoff, 2 for manual LOITER to GUIDED land 
 ready_to_land=0 ##1 to trigger landing
 
-manualArm=False ##If True, arming from RC controller, If False, arming from this script. 
+manualArm=True ##If True, arming from RC controller, If False, arming from this script. 
 
 #########FUNCTIONS#################
 
@@ -86,17 +86,17 @@ def arm_and_takeoff(targetHeight):
 		time.sleep(1)
 	print("Vehicle now in GUIDED MODE. Have fun!!")
 
-    if manualArm==False:
-        vehicle.armed = True
-        while vehicle.armed==False:
-            print("Waiting for vehicle to become armed.")
-            time.sleep(1)
-    else:
-        if vehicle.armed == False:
-            print("Exiting script. manualArm set to True but vehicle not armed.")
-            print("Set manualArm to True if desiring script to arm the drone.")
-            return None
-    print("Look out! Props are spinning!!")
+        if manualArm==False:
+            vehicle.armed = True
+            while vehicle.armed==False:
+                print("Waiting for vehicle to become armed.")
+                time.sleep(1)
+        else:
+            if vehicle.armed == False:
+                print("Exiting script. manualArm set to True but vehicle not armed.")
+                print("Set manualArm to True if desiring script to arm the drone.")
+                return None
+        print("Look out! Props are spinning!!")
             
 	vehicle.simple_takeoff(targetHeight) ##meters
 
@@ -247,7 +247,7 @@ vehicle.parameters['LAND_SPEED'] = 20 ##Descent speed of 30cm/s
 if script_mode ==1:
     arm_and_takeoff(takeoff_height)
     print(str(time.time()))
-    send_local_ned_velocity(velocity,velocity,0) ##Offset drone from target
+    #send_local_ned_velocity(velocity,velocity,0) ##Offset drone from target
     time.sleep(1)
     ready_to_land=1
 elif script_mode==2:
