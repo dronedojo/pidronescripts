@@ -34,8 +34,8 @@ horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
 vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
 
 calib_path="/home/pi/video2calibration/calibrationFiles/"
-cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix640.txt', delimiter=',')
-cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion640.txt', delimiter=',')
+cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
+cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
 ##
 
 ##Counters and script triggers
