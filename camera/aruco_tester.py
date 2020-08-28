@@ -10,8 +10,8 @@ import platform
 import sys
 #############################
 
-width=800
-height=600
+width=640
+height=480
 cap = WebcamVideoStream(src=0, height=height, width=width).start()
 viewVideo=True
 if len(sys.argv)>1:
@@ -19,8 +19,8 @@ if len(sys.argv)>1:
     if viewVideo=='0' or viewVideo=='False' or viewVideo=='false':
         viewVideo=False
 ############ARUCO/CV2############
-id_to_find=72
-marker_size=20 #cm
+id_to_find=129
+marker_size=40 #cm
 
 realWorldEfficiency=.7 ##Iterations/second are slower when the drone is flying. This accounts for that
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
@@ -53,7 +53,7 @@ while time.time()-start_time<seconds:
     gray_img = cv2.cvtColor(frame_np,cv2.COLOR_BGR2GRAY)
     ids=''
     corners, ids, rejected = aruco.detectMarkers(image=gray_img,dictionary=aruco_dict,parameters=parameters)
-
+    print(ids)
     if ids is not None and ids[0] == id_to_find:
         ret = aruco.estimatePoseSingleMarkers(corners,marker_size,cameraMatrix=cameraMatrix,distCoeffs=cameraDistortion)
         rvec,tvec = ret[0][0,0,:], ret[1][0,0,:]

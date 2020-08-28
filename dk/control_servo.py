@@ -31,4 +31,4 @@ def controlServo(servo_number,pwm_value):
 controlServo(servo,high)
 time.sleep(1)
 controlServo(servo,low)
-time.sleep(1)
+#time.sleep(1)
