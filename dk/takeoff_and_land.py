@@ -7,7 +7,7 @@ from dronekit import connect, VehicleMode,LocationGlobal,LocationGlobalRelative
 from pymavlink import mavutil
 #############################
 
-manualArm=True ##If True, arming from RC controller, If False, arming from this script. 
+manualArm=False ##If True, arming from RC controller, If False, arming from this script. 
 targetAltitude=0
 if len(sys.argv)>1:
     targetAltitude=float(sys.argv[1])
