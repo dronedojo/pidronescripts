@@ -7,19 +7,12 @@ from dronekit import connect, VehicleMode,LocationGlobal,LocationGlobalRelative
 from pymavlink import mavutil
 #############################
 
-manualArm=False ##If True, arming from RC controller, If False, arming from this script. 
-targetAltitude=0
-if len(sys.argv)>1:
-    targetAltitude=float(sys.argv[1])
-else:
-    targetAltitude=1
+targetAltitude=1
 
 ############DRONEKIT#################
-vehicle = connect('udp:127.0.0.1:14550',wait_ready=True)
-vehicle.parameters['PLND_ENABLED']=0
-vehicle.parameters['PLND_TYPE']=1
-vehicle.parameters['PLND_EST_TYPE']=0
-vehicle.parameters['LAND_SPEED']=30
+vehicle = connect('/dev/ttyACM0',baud=57600,wait_ready=True)
+
+#Select /dev/ttyAMA0 for UART. /dev/ttyACM0 for USB
 
 #########FUNCTIONS###########
 def arm_and_takeoff(targetHeight):
@@ -58,27 +51,12 @@ def arm_and_takeoff(targetHeight):
 
 	return None
 
-########CONTROL DRONE
-def send_local_ned_velocity(vx, vy, vz):
-	msg = vehicle.message_factory.set_position_target_local_ned_encode(
-		0,
-		0, 0,
-		mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,
-		0b0000111111000111,
-		0, 0, 0,
-		vx, vy, vz,
-		0, 0, 0,
-		0, 0)
-	vehicle.send_mavlink(msg)
-	vehicle.flush()
+############MAIN###############
 
-if __name__=='__main__':
-    try:
-        arm_and_takeoff(targetAltitude)
-        vehicle.mode = VehicleMode("LAND")
-        while vehicle.mode!='LAND':
-            time.sleep(1)
-            print("Waiting for drone to land")
+arm_and_takeoff(targetAltitude)
+vehicle.mode = VehicleMode("LAND")
+
+while vehicle.mode!='LAND':
         time.sleep(1)
-    except:
-        pass
+        print("Waiting for drone to land")
+print("Drone in land mode. Exiting script.")
