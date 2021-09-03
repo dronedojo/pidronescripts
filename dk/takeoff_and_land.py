@@ -8,7 +8,7 @@ from pymavlink import mavutil
 #############################
 
 targetAltitude=1
-
+manualArm=False
 ############DRONEKIT#################
 vehicle = connect('/dev/ttyACM0',baud=57600,wait_ready=True)
 
